@@ -7,7 +7,7 @@ load_dotenv(override=True)
 
 api_key = os.getenv("MINIMAX_API_KEY")
 base_url = os.getenv("MINIMAX_BASE_URL")
-model = os.getenv("MINIMAX_MODEL", "MiniMax-M2.7")
+model = os.getenv("MINIMAX_MODEL")
 
 if not api_key:
     raise ValueError("未找到 MINIMAX_API_KEY，请检查 .env 文件")
