@@ -1,13 +1,12 @@
 from llm import MiniMaxChatbot
-from prompts import SYSTEM_PROMPT
+from prompt_loader import PromptLoader
 
 def main()-> None:
     mini_max_chatbot = MiniMaxChatbot()
+    loader = PromptLoader()
+    system_prompt = loader.load("java_chat")
     messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT
-        }
+        {"role": "system", "content": system_prompt},
     ]
     print("=" * 50)
 
@@ -29,6 +28,7 @@ def main()-> None:
 
         response = mini_max_chatbot.chat(messages)
         if response is None:
+            messages.pop()
             print("未收到模型的有效响应，请重试。")
             continue
         print("AI: ")
