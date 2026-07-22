@@ -15,7 +15,11 @@ class Message(ABC):
             "role": self.role,
             "content": self.content,
         }
+    def remove_last_message(self) -> Message | None:
+        if not self._messages:
+            return None
 
+        return self._messages.pop()
 @dataclass
 class SystemMessage(Message):
     @property
@@ -51,9 +55,3 @@ class ToolMessage(Message):
             "content": self.content,
             "tool_call_id": self.tool_call_id,
         }
-
-    def remove_last_message(self) -> Message | None:
-        if not self._messages:
-            return None
-
-        return self._messages.pop()
