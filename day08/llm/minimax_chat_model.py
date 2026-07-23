@@ -5,8 +5,8 @@ from config import (
     MINIMAX_BASE_URL,
     MINIMAX_MODEL,
 )
-from core.message import Message
-
+from core.message import Message,AssistantMessage
+from core.chat_response import ChatResponse
 
 class MiniMaxChatModel:
     def __init__(
@@ -30,37 +30,59 @@ class MiniMaxChatModel:
         )
 
     def chat(
+
         self,
+
         messages: list[Message],
-    ) -> str | None:
-        try:
-            sdk_messages = [
-                message.to_dict()
-                for message in messages
-            ]
 
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=sdk_messages,
-            )
+    ) -> ChatResponse:
 
-            content = response.choices[0].message.content
+        sdk_messages = [
 
-            if not content:
-                print("模型没有返回文本内容。")
-                return None
+            message.to_dict()
 
-            return content
+            for message in messages
 
-        except APIConnectionError as error:
-            print(f"网络连接失败：{error}")
-            return None
+        ]
 
-        except APIStatusError as error:
-            print(f"API 调用失败，状态码：{error.status_code}")
-            print(f"响应内容：{error.response.text}")
-            return None
+        response = self.client.chat.completions.create(
 
-        except Exception as error:
-            print(f"发生未知错误：{error}")
-            return None
+            model=self.model,
+
+            messages=sdk_messages,
+
+        )
+
+        choice = response.choices[0]
+
+        content = choice.message.content
+
+        if not content:
+
+            raise ValueError("模型没有返回文本内容")
+
+        usage: dict[str, int] = {}
+
+        if response.usage:
+
+            usage = {
+
+                "prompt_tokens": response.usage.prompt_tokens,
+
+                "completion_tokens": response.usage.completion_tokens,
+
+                "total_tokens": response.usage.total_tokens,
+
+            }
+
+        return ChatResponse(
+
+            message=AssistantMessage(content=content),
+
+            model=response.model,
+
+            finish_reason=choice.finish_reason,
+
+            usage=usage,
+
+        )

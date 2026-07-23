@@ -1,6 +1,6 @@
 from chat.chat_service import ChatService
 from chat.memory import ChatMemory
-from day08.llm.minimax_chat_model import MiniMaxChatModel
+from llm.minimax_chat_model import MiniMaxChatModel
 from prompt.local_prompt_loader import LocalPromptLoader
 from prompt.prompt_manager import PromptManager
 from prompt.prompt_template import PromptTemplate
@@ -43,13 +43,15 @@ def main() -> None:
             print("对话结束。")
             break
 
-        response = chat_service.chat(user_input)
+        try:
+            response = chat_service.chat(user_input)
 
-        if response is None:
-            print("未收到模型的有效响应，请重试。")
-            continue
+            print(f"\nAI：{response.content}")
+            print(f"模型：{response.model}")
+            print(f"Token：{response.usage.get('total_tokens', 0)}")
 
-        print(f"\nAI：{response}")
+        except Exception as error:
+            print(f"聊天失败：{error}")
 
 
 if __name__ == "__main__":

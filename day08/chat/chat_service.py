@@ -1,4 +1,5 @@
 from chat.memory import ChatMemory
+from core.chat_response import ChatResponse
 from llm.base_chat_model import BaseChatModel
 
 
@@ -11,17 +12,19 @@ class ChatService:
         self.memory = memory
         self.chat_model = chat_model
 
-    def chat(self, user_input: str) -> str | None:
+    def chat(self, user_input: str) -> ChatResponse:
         self.memory.add_user_message(user_input)
 
-        response = self.chat_model.chat(
-            self.memory.get_messages()
-        )
-
-        if response is None:
+        try:
+            response = self.chat_model.chat(
+                self.memory.get_messages()
+            )
+        except Exception:
             self.memory.remove_last_message()
-            return None
+            raise
 
-        self.memory.add_assistant_message(response)
+        self.memory.add_assistant_message(
+            response.content
+        )
 
         return response

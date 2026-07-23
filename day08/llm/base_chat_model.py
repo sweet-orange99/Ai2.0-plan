@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-
+from core.chat_response import ChatResponse
 from core.message import Message
+
 
 
 class BaseChatModel(ABC):
@@ -9,8 +10,5 @@ class BaseChatModel(ABC):
     def chat(
         self,
         messages: list[Message],
-    ) -> str | None:
-        """
-        根据消息历史调用模型。
-        """
+    ) -> ChatResponse | None:
         ...

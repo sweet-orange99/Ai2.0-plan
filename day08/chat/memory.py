@@ -28,6 +28,11 @@ class ChatMemory:
     def get_messages(self) -> list[Message]:
         return self._messages.copy()
 
+    def remove_last_message(self) -> Message | None:
+        if not self._messages:
+            return None
+        return self._messages.pop()
+
     def clear(self) -> None:
         self._messages.clear()
 
